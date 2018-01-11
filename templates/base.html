@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+        }
+        * a{
+            text-decoration: none;
+        }
+        .top {
+            background-color: cornflowerblue;
+            height: 50px;
+        }
+        .top_1{
+            float: right;
+            margin-top: 10px;
+            margin-right: 5px;
+            color: goldenrod;
+        }
+        .top_1 a {
+            color: goldenrod;
+        }
+        .top_2{
+            float: left;
+            margin-top: 15px;
+            margin-left: 50px;
+            color: gold;
+
+        }
+        .under{
+
+        }
+        .under_left{
+            background-color: lavender;
+            width: 200px;
+            position: absolute;
+            top: 50px;
+            left: 0px;
+            bottom: 0;
+
+        }
+        .under_left a{
+            display: block;
+            padding: 15px 30px;
+            border-bottom: 1px solid #dddddd;
+            color: black;
+
+        }
+        .under_left .menu:hover{
+            background-color: burlywood;
+        }
+        .under_left .menu.active{
+            background-color: burlywood;
+        }
+        .under_right{
+            position: absolute;
+            top: 50px;
+            left: 200px;
+            right: 0px;
+            overflow: auto;
+        }
+        .hide{
+            display: none;
+        }
+        .modal{
+            position: fixed;
+            width: 400px;
+            height: 500px;
+            top: 50%;
+            left: 50%;
+            margin-top: -300px;
+            margin-left: -250px;
+            background-color: burlywood;
+            z-index: 100;
+        }
+        .modal-del{
+            position: fixed;
+            width: 100px;
+            height: 80px;
+            top: 50%;
+            left: 50%;
+            margin-top: -200px;
+            margin-left: -40px;
+            background-color: burlywood;
+            z-index: 100;
+        }
+        .backgroup{
+            position: fixed;
+            margin: 0;
+            padding: 0;
+            top:0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            background-color: black;
+            opacity: 0.3;
+        }
+        .pagination a{
+            display: inline-block;
+            padding: 5px;
+        }
+        .pagination a.active{
+            background-color: black;
+            color: #dddddd;
+        }
+        .hover-blue:hover {
+            color: cornflowerblue;
+        }
+        .hover-blue {
+            color: black;
+        }
+        {% block css %}{% endblock %}
+    </style>
+</head>
+<body>
+<div>
+    <div class="top">
+
+        <div class="top_1">
+            <span>欢迎登陆{{ username }}</span>|<span><a href="/logout.html">注销</a></span>
+        </div>
+        <div class="top_2">
+            项巍的CRM平台
+        </div>
+
+    </div>
+    <div class="under">
+        <div class="under_left">
+            <a class="left_classes menu" href="classes.html">班级管理</a>
+            <a class="left_student menu" href="student.html">学生管理</a>
+            <a class="left_teacher menu" href="teacher.html">老师管理</a>
+            <a class="left_adm menu" href="adm.html">管理员</a>
+            <a class="left_other menu" href="#">其他</a>
+        </div>
+        <div class="under_right">
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+</div>
+            <script src="/static/jquery-2.1.4.min.js"></script>
+            {% block js %}{% endblock %}
+</body>
+</html>

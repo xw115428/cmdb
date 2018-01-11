@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block css %}
+
+{% endblock %}
+
+
+{% block content %}
+    <h1>学生列表</h1>
+    <div>
+        <a class="hover-blue" href="/add_student.html">新增</a>
+        <label style="margin-left: 300px;color: cornflowerblue">总条数：{{ total_count }}</label>
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+                <th class="hide">学生ID</th>
+                <th>学生姓名</th>
+                <th>学生邮箱</th>
+                <th>年纪</th>
+                <th>所属班级</th>
+                <th>操作</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in ret %}
+                <tr>
+                    <td class="td_id hide">{{ row.id }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>{{ row.age }}</td>
+                    <td>{{ row.caption.caption }}</td>
+                    <td>
+                        <a  class="hover-blue" href="/edit_student.html?nid={{ row.id }}">编辑</a> | <a class="rd_del hover-blue" style="cursor: pointer">删除</a>
+{#                        <input class="rd_del" type="button" value="删除">#}
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    <div class="pagination">
+        {{ str_pager|safe }}
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        $(function () {
+            $('.left_student').addClass('active');
+            bindtddel()
+        })
+        //删除元素：根据id循环判断，如果后台返回的id,跟元素中的值一样，则删除该行表单
+        function bindtddel() {
+            $('.rd_del').click(function () {
+                if(confirm("确认删除？")){
+                    var nid=$(this).parent().siblings(".td_id").text()
+                    //$(this).parent().parent().remove()
+                    $.ajax({
+                        url:"student.html",
+                        type:"POST",
+                        data:{nid:nid},
+                        dataType:"JSON",
+                        success:function (rep) {
+                            if(!rep.status){
+                                alert(rep.mes)
+                            }else{
+                                rep_data=rep.data  //后台返回的id
+                                $('.td_id').each(function () {  //对该元素循环判断
+                                    var nid=$(this).text()    //获取该元素的值
+                                    if (nid==rep_data){
+                                        $(this).parent().remove()
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
+    </script>
+{% endblock %}

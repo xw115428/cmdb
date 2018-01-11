@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block css %}
+
+{% endblock %}
+
+
+
+{% block content %}
+<div class="add_stu">
+    <h1>添加学生</h1>
+    <form  action="/add_student.html" method="post">
+        <div>姓名：<input  type="text" name="name" placeholder="名字"><span id="name" style="color: red"></span></div>
+        <div id="age" >年纪：<input  type="text" name="age" placeholder="年龄"></div>
+        <div id="email">邮箱：<input  type="text" name="email" placeholder="邮箱"></div>
+        <div>班级：
+            <select class="sel_classes" name="caption">
+                {% for sel in obj_classes %}
+                <option   value="{{ sel.id }}">{{ sel.caption }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div><input type="submit" value="submit添加"></div>
+        <div><input id="ajax_add" type="button" value="ajax添加"></div>
+    </form>
+</div>
+{% endblock %}
+
+
+
+{% block js %}
+    <script>
+        $(function () {
+            $(".left_student").addClass("active")
+            add_student()
+        })
+        function add_student() {
+            $('#ajax_add').click(function () {
+                var name=$('.add_stu input[name="name"]').val()
+                var age=$('.add_stu input[name="age"]').val()
+                var email=$('.add_stu input[name="email"]').val()
+                var caption=$('.add_stu select[name="caption"]').val()
+
+                $.ajax({
+                    url: '/add_student.html',
+                    type: 'POST',
+                    data: {name:name,age:age,email:email,caption:caption},
+                    dataType: 'JSON',
+
+
+
+                    success: function (rep) {
+                        if (!rep.status){
+                             $("#name").append(rep.mes);
+                            console.log(rep.mes)
+                        }else{
+                            window.location.href = "/student";
+                        }
+                    }
+                })
+
+            })
+
+        }
+    </script>
+{% endblock %}

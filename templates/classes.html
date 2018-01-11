@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block css %}
+
+{% endblock %}
+
+
+
+{% block content %}
+
+    <h1>班级列表</h1>
+    <div>
+        <input id="id_add" type="button" value="新增">
+        <a class="hover-blue" href="add_classes.html">添加</a>
+
+    </div>
+    <table id="table_li" border="1px">
+        <tr>
+            <th>id</th>
+            <th>班级列表</th>
+            <th>操作</th>
+        </tr>
+        {% for i in cl_list %}
+        <tr>
+            <td class="i.id" xw="nid" cc={{ i.id }}>{{ i.id }}</td>
+            <td xw="caption">{{ i.caption }}</td>
+            <td>
+                <input id="a-edit" type="button" value="编辑">
+                <input id="a-del" type="button" value="删除">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="pagination">
+        {{ str_pager|safe }}
+    </div>
+
+
+<div class="backgroup hide"></div>
+<div class="modal hide">
+    <form action="/classes.html" method="post">{% csrf_token %}
+        <input name="nid" type="text" class="hide">
+        <input name="caption" type="text" placeholder="班级名"><br>
+        <input id="ajax_submit" type="button" value="ajax确定">
+        <input id="ajax_submit" type="submit" value="submit确定">
+        <input id="remove" type="button" value="取消">
+
+    </form>
+
+</div>
+
+<div class="modal-del hide">
+    <input id="a-nid" type="text" class="hide">
+    <input id="a-true" type="button" value="确定">
+    <input id="a-remove" type="button" value="取消">
+
+
+</div>
+{% endblock %}
+
+
+
+{% block js %}
+    <script>
+        $(function () {
+            $('.left_classes').addClass('active');
+            bindadd();
+            bindremove();
+            bindajaxsubmit();
+            bindAdel();
+            bindAremove();
+            bindAtrue();
+            bindAedit();
+
+        });
+        //#新增：模态对话框显示
+        function bindadd() {
+            $("#id_add").click(function () {
+                $('.backgroup,.modal').removeClass('hide')
+
+            })
+        }
+        //#新增-取消：模态对话框显示
+        function bindremove() {
+            $("#remove").click(function () {
+                $('.backgroup,.modal').addClass('hide')
+            })
+        }
+
+        //删除：模态对话框显示，并在对话框中添加id input
+        function bindAdel() {
+            $("tr #a-del").click(function () {
+                $('.backgroup,.modal-del').removeClass('hide')
+
+
+                var tds=$(this).parent().prevAll()
+                $('.modal-del input[id="a-nid"]').val(tds[1].innerText)
+
+            })
+            /*
+             $("table").on("click","tr #a-del",function () {
+                 if(confirm("确定删除这条数据?")){
+                     var value=$(this).parent().siblings(".i_id").text()
+                     $(this).parent().parent().remove()
+                     $.ajax({
+                         url: "/classes.html",
+                         type: "POST",
+                         data: {id:value},
+                         dataType: "JSON",
+                         success: function (rep) {
+                             if (!rep.status){alert(rep.mes)}
+
+                         }
+                     })
+
+                 }
+             })
+             */
+
+        }
+
+        //删除-取消：模态对话框不显示
+        function bindAremove() {
+            $("#a-remove").click(function () {
+                $('.backgroup, .modal-del').addClass('hide')
+            })
+        }
+
+        //新增，提交
+        function bindajaxsubmit() {
+
+            $("#ajax_submit").click(function () {
+
+                var caption = $('.modal input[name="caption"]').val();
+
+                console.log(caption)
+                $.ajax({
+                    url: '/classes.html',
+                    type: 'POST',
+                    data: {add_caption:caption},
+                    dataType: 'JSON',
+                    success: function (rep) {
+                        if (!rep.status){
+                            alert(rep.mes)
+                        }else {
+                            /*
+                            var tr=document.createElement("tr");
+                            var td1=document.createElement("td")
+                            var td2=document.createElement("td")
+                            td1.innerHTML=rep.data.id
+                            td2.innerHTML=rep.data.caption
+                            var td3=document.createElement("td")
+                            td3.innerHTML="|"
+                            var a1=document.createElement("a")
+                            a1.innerHTML="编辑"
+                            var input1=document.createElement("input")
+                            //input1.setAttribute("id","a-del")
+                            input1.setAttribute("type","button")
+                            input1.setAttribute("value","删除")
+                            input1.id="a-del"
+                            $(td3).prepend(a1)
+                            $(td3).append(input1)
+                            $(tr).append(td1)
+                            $(tr).append(td2)
+                            $(tr).append(td3)
+                            $("table").append(tr)
+
+                            $('.backgroup,.modal').addClass('hide')
+                            */
+                            location.reload()
+
+                        }
+                    }
+                })
+            })
+        }
+
+        //#删除提交
+        function bindAtrue() {
+            $('#a-true').click(function () {
+                //console.log($('.modal-del input[id="a-nid"]').val())
+                var value = $('.modal-del input[id="a-nid"]').val();
+                $.ajax({
+                    url: "/classes.html",
+                    type: 'POST',
+                    data: {del_id: value},
+                    dataType: "JSON",
+                    success: function (rep) {
+                        if (!rep.status) {
+                            alert(rep.mes)
+                        } else {
+                            //console.log(value)
+                            location.reload()
+                        }
+                    }
+
+                })
+            })
+        }
+
+        //编辑，弹出模态框，并在对话框中添加id input
+        function bindAedit() {
+            $("table").on('click','#a-edit',function (){
+                $('.backgroup, .modal').removeClass('hide')
+                 //var tds=$(this).parent().prevAll()
+                //$('.modal-del input[xw="id"]').val(tds[1].innerText)
+                //$('.modal-del input[xw="caption"]').val(tds[1].innerText)
+                $(this).parent().prevAll().each(function () {
+                    var text=$(this).text()
+                    var name=$(this).attr('xw')
+                    $('.modal input[name="'+name+'"]').val(text)
+                })
+
+            })
+
+        }
+        //编辑，提交
+        function bindajaxsubmit() {
+
+            $("#ajax_submit").click(function () {
+
+                var nid = $('.modal input[name="nid"]').val();
+                var caption = $('.modal input[name="caption"]').val();
+                console.log(nid)
+                console.log('-----###---')
+                var nid_cap=[nid,caption]
+
+
+                console.log(caption)
+                console.log(nid_cap)
+                $.ajax({
+                    url: '/classes.html',
+                    type: 'POST',
+                    data: {edit_id:nid,edit_cap:caption},
+                    dataType: 'JSON',
+                    success: function (rep) {
+                        if (!rep.status){
+                            alert(rep.mes)
+                        }else {
+
+                            //$('.backgroup,.modal').addClass('hide')
+                            //$('#table_li td[cc="'+nid+'"]').next().val(caption)
+
+                            location.reload()
+
+                        }
+                    }
+                })
+            })
+        }
+
+
+    </script>
+{% endblock %}
